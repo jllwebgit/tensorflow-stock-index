@@ -9,7 +9,7 @@ class FeedCache(object):
     def __init__(self, code, label):
         self.code = code
         self.file_path = os.path.join(self.FILE_DIR, '{}_{}.csv'.format(code, label))
-        print self.file_path
+        print(self.file_path)
 
     def is_exist(self):
         return os.path.exists(self.file_path)

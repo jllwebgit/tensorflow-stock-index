@@ -3,10 +3,10 @@
 Code based on:
 https://github.com/corrieelston/datalab/blob/master/FinancialTimeSeriesTensorFlow.ipynb
 '''
-from __future__ import print_function
+
 
 import datetime
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import math
 import os
 import shutil
@@ -23,7 +23,7 @@ from brands import nikkei225_s
 from feed_cache import FeedCache
 
 
-TEST_COUNT = 200        # テスト日数
+TEST_COUNT = 3650        # テスト日数
 TRAIN_MIN = 1000        # 学習データの最低日数
 TRAIN_MAX = None        # 学習データの最大日数
 DAYS_BACK = 3           # 過去何日分を計算に使用するか
@@ -73,13 +73,13 @@ def load_exchange_dataframes(stocks, target_brand):
 
     # 株価を読み込む
     datas = {}
-    for (name, stock) in stocks.items():
+    for (name, stock) in list(stocks.items()):
         datas[name] = stock.dataframe
 
     # 計算対象の日付に存在しないデータを削除する
     if REMOVE_NIL_DATE:
         target_indexes = datas[target_brand].index
-        for (exchange, data) in datas.items():
+        for (exchange, data) in list(datas.items()):
             for index in data.index:
                 if not index in target_indexes:
                     datas[exchange] = datas[exchange].drop(index)
@@ -108,7 +108,7 @@ def get_using_data(dataframes, target_brand):
     '''
     using_data = pd.DataFrame()
     datas = [(target_brand, dataframes[target_brand])]
-    datas.extend([(exchange, dataframe) for exchange, dataframe in dataframes.items() if exchange != target_brand])
+    datas.extend([(exchange, dataframe) for exchange, dataframe in list(dataframes.items()) if exchange != target_brand])
     for exchange, dataframe in datas:
         using_data['{}_Open'.format(exchange)] = dataframe['Open']
         using_data['{}_Close'.format(exchange)] = dataframe['Close']
@@ -137,7 +137,7 @@ def get_log_return_data(stocks, using_data):
         pd.DataFrame()
     '''
     log_return_data = pd.DataFrame()
-    for (name, stock) in stocks.items():
+    for (name, stock) in list(stocks.items()):
         open_column = '{}_Open'.format(name)
         close_column = '{}_Close'.format(name)
         high_column = '{}_High'.format(name)
@@ -234,7 +234,7 @@ def build_training_data(stocks, log_return_data, target_brand, max_days_back=DAY
 def iter_exchange_days_back(stocks, target_brand, max_days_back):
     '''指標名、何日前のデータを読むか、カラム名を列挙する。
     '''
-    for (exchange, stock) in stocks.items():
+    for (exchange, stock) in list(stocks.items()):
         end_days_back = stock.start_days_back + max_days_back
         for days_back in range(stock.start_days_back, end_days_back):
             colname = '{}_{}'.format(exchange, days_back)
@@ -313,7 +313,7 @@ def smarter_network(stocks, dataset, layer1, layer2):
     saver = tf.train.Saver()
 
     # 変数の初期化処理
-    init = tf.initialize_all_variables()
+    init = tf.global_variables_initializer()
     sess.run(init)
 
     return Environ(

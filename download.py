@@ -2,7 +2,7 @@
 import sys
 import os.path
 import datetime
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import pandas as pd
 import lxml.html
 import re
@@ -11,7 +11,7 @@ import argparse
 from brands import all_brands
 
 
-dateMatch = re.compile(u'(\d+)年(\d+)月(\d+)日')
+dateMatch = re.compile('(\d+)年(\d+)月(\d+)日')
 
 
 class Download(object):
@@ -104,8 +104,8 @@ class YahooCom(Download):
         )
 
     def _download_prices(self):
-        print('fetch CSV for url: ' + self._url)
-        csv = urllib2.urlopen(self._url).read()
+        print(('fetch CSV for url: ' + self._url))
+        csv = urllib.request.urlopen(self._url).read().decode('utf-8')
         return [line.split(',') for line in csv.split('\n')[1:]]
 
     def _upload_prices(self):
@@ -161,20 +161,20 @@ class YahooJp(Download):
         return prices
 
     def _downloadPage(self, page):
-        html = urllib2.urlopen(self._url(page)).read()
+        html = urllib.request.urlopen(self._url(page)).read()
         prices = self._getPrices(html, 5)
         if len(prices) == 0:
             prices = self._getPrices(html, 6)
         return prices
 
     def _download_prices(self, limit_date=None):
-        print 'fetch CSV for url: ' + self._url(1),
+        print('fetch CSV for url: ' + self._url(1), end=' ')
         sys.stdout.flush()
         page = 1
         prices = []
         fetch = True
         while fetch:
-            print page,
+            print(page, end=' ')
             sys.stdout.flush()
             pagePrices = self._downloadPage(page)
             if len(pagePrices) > 0:
@@ -192,7 +192,7 @@ class YahooJp(Download):
                 #time.sleep(0.1)
             else:
                 fetch = False
-        print ''
+        print('')
         return prices
 
     def _upload_prices(self):
@@ -214,5 +214,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     for (i, (code, name, _)) in enumerate(all_brands[args.skip:]):
-        print '{} / {}'.format(args.skip + i + 1, len(all_brands)), code, name
+        print('{} / {}'.format(args.skip + i + 1, len(all_brands)), code, name)
         YahooJp(code)

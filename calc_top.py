@@ -20,7 +20,7 @@ if os.path.exists(file_path):
     os.remove(file_path)
 
 for i, (code, name, _) in enumerate(brands):
-    print '{} / {}: {} {}'.format(i + 1, len(brands), code, name)
+    print(('{} / {}: {} {}'.format(i + 1, len(brands), code, name)))
     commena = 'python goognet.py {} --layer1={} --layer2={} --load_sess=0'.format(code, layer1, layer2)
-    print commena
+    print(commena)
     os.system(commena)

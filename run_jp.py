@@ -16,7 +16,7 @@ layerLog = LayerLog('layer_logs', '{}_{}.csv'.format(layer1, layer2), codes)
 
 # 計算する
 for i, (code, name, _) in enumerate(brands):
-    print '{} / {}: {} {}'.format(i + 1, len(codes), code, name)
+    print('{} / {}: {} {}'.format(i + 1, len(codes), code, name))
 
     with open(os.path.join('data', 'YH_JP_{}.csv'.format(code)), 'r') as f:
         lines = f.read().split('\n')
@@ -25,4 +25,4 @@ for i, (code, name, _) in enumerate(brands):
                 commena = 'python goognet.py {} --layer1={} --layer2={}'.format(code, layer1, layer2)
                 os.system(commena)
         else:
-            print 'データが少なすぎる'
+            print('データが少なすぎる')

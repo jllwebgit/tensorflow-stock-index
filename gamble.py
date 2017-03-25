@@ -41,5 +41,5 @@ for date, brand in sorted(buy_dates.items()):
     money += sell_value
     # 売却手数料の支払い
     money -= buy_charge(sell_value)
-    print date, money
-print money
+    print(date, money)
+print(money)

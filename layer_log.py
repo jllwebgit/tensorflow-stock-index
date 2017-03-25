@@ -48,6 +48,6 @@ class LayerLog(object):
         if not os.path.exists(self.dir_path):
             os.mkdir(self.dir_path)
         with open(self.file_path, 'w') as f:
-            data = '\n'.join([','.join([k] + v) for (k, v) in logs.items()])
+            data = '\n'.join([','.join([k] + v) for (k, v) in list(logs.items())])
             f.write(data)
             print('saved')
